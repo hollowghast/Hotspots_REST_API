@@ -58,14 +58,10 @@ class Place {
     }
     
     public static function getAllPlaces() {
-        $query = "SELECT * FROM :table;";
+        $query = 'SELECT * FROM ":TABLE_NAME";';
         $stmt = Database::getConnection()->prepare($query);
-        //bind
-        $table = "Place";
         
-        /* to do: doesnt bind value, just prints $1 instead */
-        
-        $stmt->bindValue(":table", "%{$table}%");
+        $stmt->bindValue(":TABLE_NAME", TABLE_NAME);
         
         if(!$stmt->execute()){
             echo "Failure!";

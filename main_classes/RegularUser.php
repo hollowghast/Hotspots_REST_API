@@ -50,21 +50,63 @@ class RegularUser {
         return RegularUser::$last_modified;
     }
 
-    public function createNewUser() {
-        $query = 'INSERT INTO \"RegularUser\"(username, pass)' .
-                ' VALUES(:username, :pass);';
+    public function createNewUser():bool
+    {
+        $query = 'INSERT INTO "RegularUser" ("Username", "Password")' .
+                ' VALUES(:username, :password);';
 
         $stmt = Database::getConnection()->prepare($query);
+        
+        //RegularUser::$username = htmlspecialchars(strip_tags(RegularUser::$username));
+        //RegularUser::$password = htmlspecialchars(strip_tags(RegularUser::$password));
 
-        RegularUser::$username = htmlspecialchars(strip_tags(RegularUser::$username));
-        RegularUser::$password = htmlspecialchars(strip_tags(RegularUser::$password));
+        $stmt->bindParam(":username", RegularUser::$username, PDO::PARAM_STR, 255);
+        //$stmt->bindValue(":username", '%{RegularUser::$username}%');
+        
+//$stmt->bindValue(":username", RegularUser::$username);
 
-        $stmt->bindParam(":username", RegularUser::$username, PDO::PARAM_STR);
-        $stmt->bindParam(":pass", RegularUser::$password, PDO::PARAM_STR);
+        $stmt->bindParam(":password", RegularUser::$password, PDO::PARAM_STR, 255);
+        //$stmt->bindValue(":password", '%{RegularUser::$password}%');
 
-        return $stmt->execute();
+//$stmt->bindValue(":password", RegularUser::$password);
+        
+        try{
+            $success = $stmt->execute();
+        } catch (Exception $ex) {
+            HTTP_Response::sendPlainMessage(HTTP_Status_Codes::BAD_REQUEST, "Username probably exists already.");
+            die;
+        }
+            
+        
+        return $success;
+    }
+    
+    public function checkIfUsernameExists($username):bool
+    {
+        $query = 'SELECT "UserId" FROM "RegularUser" '
+                . ' WHERE "Username" = :username;';
+
+        $stmt = Database::getConnection()->prepare($query);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
+        
+        try{
+            $stmt->execute();
+            $rowsAffected = $stmt->rowCount(); //may only result in 0 or 1
+            if($rowsAffected){ //0 -> false ; 1 -> true
+                return false;
+            }
+            return true;
+        } catch (Exception $ex) {
+            HTTP_Response::sendPlainMessage(HTTP_Status_Codes::INTERNAL_SERVER_ERROR,
+                    "Connectivity problems with our database.");
+            die;
+        }
     }
 
+    /**
+     * @deprecated
+     * @param type $id
+     */
     public function getUserByID($id) {
         $query = 'SELECT * FROM \"RegularUser\" WHERE userid = :id;';
 
@@ -83,21 +125,19 @@ class RegularUser {
     }
 
     public static function checkLogin($username, $password) {
-        $query = 'SELECT userid FROM \"RegularUser\" WHERE username = :username AND'
-                . ' pass = :password;';
+        $query = 'SELECT "UserId" FROM "RegularUser" WHERE "Username" = :username AND'
+                . ' "Password" = :password;';
 
         $stmt = Database::getConnection()->prepare($query);
         //$username = htmlspecialchars(strip_tags($username));
         //$password = htmlspecialchars(strip_tags($password));
         $stmt->bindParam(":username", $username, PDO::PARAM_STR);
         $stmt->bindParam(":password", $password, PDO::PARAM_STR);
-        
         $stmt->execute();
         $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if(count($rows) == 1){ //either 0 or 1
-            if(isset($rows['userid'])){
-                return $rows['userid'];
+        if($rows){ //on success
+            if(isset($rows['UserId'])){
+                return $rows['UserId'];
             }
         }
         

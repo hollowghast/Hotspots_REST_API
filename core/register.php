@@ -23,6 +23,7 @@ if(empty($data)){
 if (empty($data->username) || empty($data->password)) {
     //can't create user
     HTTP_Response::sendPlainMessage(HTTP_Status_Codes::BAD_REQUEST, "Not enough data provided.");
+    die;
 } else {
     //create user
     //$u = new RegularUser(); //before making it static
@@ -30,7 +31,9 @@ if (empty($data->username) || empty($data->password)) {
     RegularUser::setPassword($data->password); //hashing
     if (RegularUser::createNewUser()) {
         HTTP_Response::sendPlainMessage(HTTP_Status_Codes::OK, "User created.");
+        die;
     } else {
         HTTP_Response::sendPlainMessage(HTTP_Status_Codes::INTERNAL_SERVER_ERROR, "User not created.");
+        die;
     }
 }

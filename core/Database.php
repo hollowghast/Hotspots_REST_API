@@ -19,20 +19,18 @@ class Database {
     private static $local_db_name = "DiplomaThesis";
     private static $local_username = "postgres";
     private static $local_password = "postgres";
-    
     private static $remote_host = "localhost";
     private static $remote_db_name = "deudaz15";
     private static $remote_username = "deudaz15";
     private static $remote_password = "deudaz15";
-    
     private static $conn;
 
     public static function getConnection() {
 
-        if(Database::$conn != null){
+        if (Database::$conn != null) {
             return Database::$conn;
         }
-        
+
         Database::$conn = null;
 
         $host = filter_input(INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING);
@@ -47,11 +45,13 @@ class Database {
                     PDO::ATTR_PERSISTENT => true //for performance
                 ));
             }
-            Database::$conn->exec("set names utf8");
+            Database::$conn->exec("SET NAMES 'UTF8';");
+            Database::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            //Database::$conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             //echo "Successfully connected to DB.";
-        } catch (PDOException $exception) {
+        } catch (PDOException $exp) {
             //echo "Connection error: " . $exception->getMessage();
-            http_response_code(HTTP_Status_Codes::INTERNAL_SERVER_ERROR);        
+            HTTP_Response::sendPlainMessage(HTTP_Status_Codes::INTERNAL_SERVER_ERROR, $exp);
             die;
         }
 

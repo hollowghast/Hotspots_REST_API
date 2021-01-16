@@ -13,6 +13,7 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once dirname(__FILE__) . '/../core/Database.php';
 require_once dirname(__FILE__) . '/../main_classes/RegularUser.php';
 require_once dirname(__FILE__) . '/../core/HTTP_Status_Codes.php';
+require_once dirname(__FILE__) . '/../main_classes/UserProfile.php';
 
 //check POST for username and password
 //$username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_STRING);
@@ -31,6 +32,8 @@ if (empty($data->username) || empty($data->password)) {
 
     if ($id >= 0) {
         $_SESSION['userid'] = $id;
+        UserProfile::setProfileId($id);
+        UserProfile::fetchProfileDataByID();
         HTTP_Response::sendPlainMessage(HTTP_Status_Codes::OK, "Logged in.");
         die();
     }

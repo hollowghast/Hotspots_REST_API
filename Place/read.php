@@ -23,7 +23,10 @@ require_once dirname(__FILE__) . '/../core/HTTP_Response.php';
 //    "lat" => 24.27187);
 //echo json_encode($places);
 //$_SESSION['userid'] = 1;
-Place::getAllPlaces();
+
+//Place::getAllPlaces();
+
+
 //check if user is logged in
 
 if (isset($_SESSION['userid'])) {
@@ -49,25 +52,7 @@ if (isset($_SESSION['userid'])) {
     }
 //if user found
 //testdata
-    else if ($userid == "-1") {
-        http_response_code(HTTP_STATUS_CODES::OK);
-        echo json_encode(
-                array(
-                    array(
-                        "id" => "$userid",
-                        "username" => "some fictional user",
-                        "created" => "267436276276"
-                    )
-                )
-        );
-    } else {
-        http_response_code(404);
-        echo json_encode(
-                array(
-                    "message" => "User not found."
-                )
-        );
-    }
+    
 
 
 
