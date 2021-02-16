@@ -27,6 +27,7 @@ require_once dirname(__FILE__) . '/../core/HTTP_Response.php';
 //check if user is logged in
 
 if (isset($_SESSION['userid'])) {
+    UserProfile::fetchProfileDataByID($_SESSION['userid']);
     echo json_encode(UserProfile::getAttributes());
     http_response_code(HTTP_Status_Codes::OK);
     die;

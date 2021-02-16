@@ -32,8 +32,9 @@ if (empty($data->username) || empty($data->password)) {
 
     if ($id >= 0) {
         $_SESSION['userid'] = $id;
-        UserProfile::setProfileId($id);
-        UserProfile::fetchProfileDataByID();
+        setcookie("userid", $id);
+        //UserProfile::setProfileId($id);
+        //UserProfile::fetchProfileDataByID();
         HTTP_Response::sendPlainMessage(HTTP_Status_Codes::OK, "Logged in.");
         die();
     }

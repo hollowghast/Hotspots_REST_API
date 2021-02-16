@@ -41,30 +41,24 @@ if (isset($_SESSION['userid'])) {
 //return specific places in that area
 
         //HTTP_Response::sendPlainMessage(HTTP_Status_Codes::NOT_FOUND, "Functionality not implemented yet");
-        $places = array();
-        $places['default place 1'] = array("long" => 12.21221,
-            "lat" => 24.27187);
-        $places['default place 2'] = array("long" => 74.21221,
-            "lat" => 12.27187);
-        echo json_encode(array($places));
+//        $places = array();
+//        $places['1'] = array("long" => 12.21221,
+//            "lat" => 24.27187);
+//        $places['2'] = array("long" => 74.21221,
+//            "lat" => 12.27187);
+//        echo json_encode(array($places));
+        /*$daten4Andi = array(
+            array("long" => "12.25212", "lat" =>"12.12221"),
+            array("long" => "22.25212", "lat" =>"36.12221"),
+            array("long" => "21.25212", "lat" =>"4.12221"),
+            array("long" => "3.25212", "lat" =>"21.12221")
+        );*/
+        
+        
+        http_response_code(HTTP_Status_Codes::OK);
+        echo json_encode(Place::getAllPlaces());
         die();
-        //echo json_encode($user_arr);
     }
-//if user found
-//testdata
-    
-
-
-
-//testdata
-    echo json_encode(
-            array(
-                "lat" => 27.2251,
-                "lon" => 33.2617,
-                "name" => "Some Place"
-            )
-    );
-    http_response_code(HTTP_Status_Codes::OK);
 } else {
     http_response_code(HTTP_Status_Codes::BAD_REQUEST);
     die;
